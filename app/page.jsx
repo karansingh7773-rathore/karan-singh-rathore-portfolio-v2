@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import Chatbot from '../components/Chatbot'
+import Chatbot from '../components/chatbot'
 
 // Mock data for demonstration when Supabase is not configured
 // Added 'slug' for dynamic routing
