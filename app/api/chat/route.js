@@ -7,10 +7,29 @@ export async function POST(req) {
     const { messages } = await req.json();
     console.log('Received messages:', messages);
 
+    // Get current date and time
+    const now = new Date();
+    const currentDate = now.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+    const currentTime = now.toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit', 
+      timeZoneName: 'short' 
+    });
+
     // Create a system message to give context about the portfolio
     const systemMessage = {
       role: 'system',
       content: `You are an AI assistant for Karan Singh Rathore's portfolio website. You should help visitors learn about Karan's projects, skills, and experience as a Freelance IT Project Developer.
+
+## Current Date & Time Information
+**Today's Date**: ${currentDate}
+**Current Time**: ${currentTime}
+**Note**: Always use this current date information when users ask about dates, timelines, or time-related queries.
 
 ## Professional Experience
 **Freelance IT Project Developer** (Current)
@@ -59,6 +78,7 @@ export async function POST(req) {
 
 ## Response Guidelines
 When users ask about:
+- **Date/Time**: Use the current date and time information provided above
 - **"projects" or "show projects"**: Provide detailed project descriptions with features and links
 - **"contact" or "details"**: Share complete contact information with clickable links
 - **"skills" or "technologies"**: List comprehensive technical expertise with categories
