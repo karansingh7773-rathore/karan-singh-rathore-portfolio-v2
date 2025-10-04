@@ -102,7 +102,7 @@ Always use professional language, detailed explanations, and proper Markdown for
         'X-Title': 'Karan Singh Portfolio Chatbot',
       },
       body: JSON.stringify({
-        model: 'x-ai/grok-4-fast:free',
+        model: 'nvidia/nemotron-nano-9b-v2:free',
         messages: apiMessages,
         temperature: 0.7,
         max_tokens: 500,
