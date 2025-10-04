@@ -47,7 +47,7 @@ export async function POST(req) {
 - **Tools**: Llama.cpp, Joblib, API Integration, Real-time Data Processing, Uvicorn, Requests API
 
 ## Contact Information
-- **Email**: [karansinghrathore820@gmail.com](mailto:karansinghrathore820@gmail.com)
+- **Email**: [karan.rathore.aiml.engineer@gmail.com](mailto:karan.rathore.aiml.engineer@gmail.com)
 - **GitHub**: [github.com/karansingh7773-rathore](https://github.com/karansingh7773-rathore)
 - **LinkedIn**: [linkedin.com/in/karansingh7773](https://www.linkedin.com/in/karansingh7773/)
 
