@@ -165,7 +165,7 @@ export default function PortfolioPage() {
             {/* Action buttons */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in delay-600">
         <a
-          href="mailto:karansinghrathore820@gmail.com"
+          href="mailto:karan.rathore.aiml.engineer@gmail.com"
           className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-slate-600 hover:border-slate-500 text-slate-300 hover:text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-opacity-50"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>

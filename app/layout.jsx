@@ -18,10 +18,10 @@ const poppins = Poppins({
 // Metadata configuration
 export const metadata = {
   title: {
-    default: 'Karan Singh Rathore - Freelance IT Project Developer',
+    default: 'Karan Singh Rathore - Freelance AI/ML Project Developer',
     template: '%s | Karan Singh Rathore',
   },
-  description: 'Passionate full-stack developer with expertise in modern web technologies. I create scalable, user-friendly applications that solve real-world problems.',
+  description: 'Passionate AI/ML developer with expertise in OpenSource LLMs and Deep Learning Models. I create scalable, applications that solve real-world problems.',
   keywords: [
     'freelance developer',
     'full-stack developer',
@@ -134,9 +134,9 @@ export default function RootLayout({ children }) {
               "name": "Karan Singh Rathore",
               "jobTitle": "Freelance IT Project Developer",
               "description": "Passionate full-stack developer with expertise in modern web technologies. I create scalable, user-friendly applications that solve real-world problems.",
-              "url": "https://karansinghrathore.com", // Replace with your actual domain
+              "url": "www.karansinghrathore.me", // Replace with your actual domain
               "sameAs": [
-                "https://github.com/karansinghrathore", // Replace with your actual GitHub
+                "https://github.com/karansingh7773-rathore", // Replace with your actual GitHub
                 "https://linkedin.com/in/karansinghrathore", // Add your LinkedIn if available
                 // Add other social profiles
               ],

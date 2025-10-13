@@ -64,7 +64,7 @@ A key feature of this website is you—the integrated Portfolio AI Assistant—d
 - Seamless integration with development workflows
 
 **Technologies**: Python, FastAPI, Llama.cpp, MongoDB, Vanilla JavaScript
-**Link**: [View Project Details](/projects/ai-chatbot)
+**Link**: [View Project Details](https://www.karansinghrathore.me/projects/local-first-ai-chatbot-with-persistent-memory-and-code-canvas)
 
 ### 2. Disaster Risk Forecaster
 **Description**: An intelligent command-line tool that leverages real-time data and machine learning algorithms to predict disaster risks, providing comprehensive weather warnings and AI-driven safety recommendations.
@@ -76,7 +76,7 @@ A key feature of this website is you—the integrated Portfolio AI Assistant—d
 - Command-line interface for easy deployment
 
 **Technologies**: Python, FastAPI, Llama.cpp, MongoDB, Scikit-learn, Pandas, Requests API, Joblib
-**Link**: [View Project Details](/projects/disaster-risk-forecaster)
+**Link**: [View Project Details](https://www.karansinghrathore.me/projects/ai-powered-disaster-prediction-system)
 
 ## Response Guidelines
 When users ask about:

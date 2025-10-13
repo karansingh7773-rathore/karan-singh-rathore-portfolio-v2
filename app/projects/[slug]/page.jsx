@@ -70,6 +70,7 @@ export default function ProjectDetailPage() {
         const slug = pathParts.pop() || pathParts.pop(); // handle potential trailing slash
 
         async function fetchProject() {
+            console.log("Attempting to fetch project with slug:", slug);
             try {
                 const { data, error } = await supabase
                     .from('projects')
@@ -81,6 +82,7 @@ export default function ProjectDetailPage() {
                     console.error('Supabase error:', error)
                     setError('Could not find the requested project.')
                 } else {
+                    console.log('Project data received from Supabase:', data);
                     setProject(data)
                 }
             } catch (err) {

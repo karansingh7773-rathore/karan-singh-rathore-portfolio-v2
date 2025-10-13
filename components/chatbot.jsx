@@ -238,15 +238,27 @@ export default function Chatbot() {
       {/* Toggle Button */}
       <button
         onClick={toggleChat}
-        className="w-16 h-16 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg flex items-center justify-center transition-transform duration-200 hover:scale-110 ml-auto"
+        className="w-16 h-16 bg-white-800 hover:bg-white-700 text-white rounded-full shadow-lg flex items-center justify-center transition-transform duration-200 hover:scale-110 ml-auto border border-white"
         aria-label="Toggle Chat"
       >
         {isChatOpen ? (
           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         ) : (
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          <img
+            src="/styles/icons8-jasper-ai-30-white.png"
+            alt="Chatbot Logo"
+            width={32}
+            height={32}
+            style={{ display: 'block' }}
+            onError={e => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.style.display = 'none';
+              // Optionally show fallback content here
+            }}
+          />
         )}
       </button>
+      <div className="text-center text-xs text-slate-300 mt-1 font-medium select-none">Ask me</div>
     </div>
   );
 }
