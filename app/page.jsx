@@ -152,13 +152,13 @@ export default function PortfolioPage() {
             
             {/* Subtitle */}
             <h2 className="text-2xl md:text-3xl font-semibold text-slate-200 mb-8 animate-fade-in delay-200">
-              Freelance IT Project Developer
+              Freelance AIML Developer or Engineer
             </h2>
             
             {/* Bio */}
             <p className="text-lg md:text-xl text-slate-400 mb-12 leading-relaxed max-w-3xl mx-auto animate-fade-in delay-400">
-              Passionate full-stack developer with expertise in modern web technologies. 
-              I create scalable, user-friendly applications that solve real-world problems. 
+              Passionate AI/ML developer with expertise in OpenSource LLMs and Deep Learning Models. 
+              I create scalable, applications that solve real-world problems. 
               From concept to deployment, I deliver high-quality solutions that exceed expectations.
             </p>
             
@@ -255,11 +255,11 @@ export default function PortfolioPage() {
               Let's Work Together
             </h2>
             <p className="text-xl text-slate-400 mb-8 leading-relaxed">
-              Ready to bring your next project to life? I'm available for freelance work and 
+              Ready to bring project to life? I'm available for freelance work and 
               always excited to take on new challenges. Let's discuss how we can create something amazing together.
             </p>
             <a
-              href="mailto:karansinghrathore820@gmail.com"
+              href="mailto:karan.rathore.aiml.engineer@gmail.com"
               className="inline-flex items-center justify-center px-10 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 text-lg"
             >
               Contact Me
