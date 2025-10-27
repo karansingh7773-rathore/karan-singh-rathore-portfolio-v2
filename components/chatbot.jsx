@@ -196,13 +196,8 @@ export default function Chatbot() {
                   animate={{ opacity: 1, y: 0 }}
                   className="text-slate-400 text-sm space-y-2"
                 >
-                  <div> Hi! I'm Karan's portfolio assistant. I can help you with:</div>
-                  <div className="text-xs space-y-1 ml-2">
-                    <div>• "Show me projects" - View all projects</div>
-                    <div>• "Contact details" - Get contact info</div>
-                    <div>• "What skills does he have?" - Technical expertise</div>
-                    <div>• "Tell me about his experience" - Background info</div>
-                  </div>
+                  <div> Hi! I'm Karan's portfolio assistant. How can I help you:</div>
+          
                   <div className="mt-2">What would you like to know?</div>
                 </motion.div>
               ) : (
