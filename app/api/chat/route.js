@@ -141,7 +141,7 @@ export async function POST(req) {
                 ],
                 stream: true,
                 temperature: 0.7,
-                max_tokens: 5000,
+                max_tokens: 3000,
                 top_p: 1,
               })
             });
