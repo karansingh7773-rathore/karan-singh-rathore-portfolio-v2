@@ -1,19 +1,19 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Chatbot() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [messages, setMessages] = useState([]);
-  const [inputValue, setInputValue] = useState('');
+  const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
   const abortControllerRef = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
@@ -22,24 +22,27 @@ export default function Chatbot() {
 
   const toggleChat = () => setIsChatOpen(!isChatOpen);
 
+  const handleClear = () => {
+    setMessages([]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!inputValue.trim() || isLoading) return;
+    if (!input?.trim() || isLoading) return;
 
-    const userMessage = inputValue.trim();
-    setInputValue('');
+    const userMessage = input.trim();
+    setInput('');
     setIsLoading(true);
 
     const newUserMessage = {
-      id: Date.now(),
+      id: Date.now().toString(),
       role: 'user',
       content: userMessage
     };
 
     setMessages(prev => [...prev, newUserMessage]);
 
-    // Create bot message placeholder
-    const botMessageId = Date.now() + 1;
+    const botMessageId = (Date.now() + 1).toString();
     const botMessage = {
       id: botMessageId,
       role: 'assistant',
@@ -50,15 +53,11 @@ export default function Chatbot() {
 
     try {
       const currentMessages = [...messages, newUserMessage];
-      
-      // Create abort controller for cleanup
       abortControllerRef.current = new AbortController();
 
       const response = await fetch('/api/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: currentMessages.map(msg => ({
             role: msg.role,
@@ -101,7 +100,6 @@ export default function Chatbot() {
               if (parsed.content) {
                 accumulatedContent += parsed.content;
                 
-                // Update the bot message in real-time
                 setMessages(prev => prev.map(msg => 
                   msg.id === botMessageId 
                     ? { ...msg, content: accumulatedContent }
@@ -118,11 +116,10 @@ export default function Chatbot() {
     } catch (error) {
       console.error('Error in chat:', error);
       
-      // Remove the empty bot message and add error message
       setMessages(prev => prev.filter(msg => msg.id !== botMessageId));
       
       const errorMessage = {
-        id: Date.now() + 2,
+        id: (Date.now() + 2).toString(),
         role: 'assistant',
         content: `Sorry, I encountered an error: ${error.message}. Please try asking again.`
       };
@@ -131,11 +128,6 @@ export default function Chatbot() {
     }
   };
 
-  const handleInputChange = (e) => {
-    setInputValue(e.target.value);
-  };
-
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (abortControllerRef.current) {
@@ -146,7 +138,6 @@ export default function Chatbot() {
 
   return (
     <div className="fixed bottom-5 right-5 z-50">
-      {/* Chat Window with Animations */}
       <AnimatePresence>
         {isChatOpen && (
           <motion.div
@@ -178,9 +169,7 @@ export default function Chatbot() {
                 <h3 className="text-white font-semibold">Portfolio Assistant</h3>
               </div>
               <button 
-                onClick={() => {
-                  setMessages([]);
-                }}
+                onClick={handleClear}
                 className="text-slate-300 hover:text-white text-sm transition-colors"
                 title="Clear chat"
               >
@@ -196,15 +185,14 @@ export default function Chatbot() {
                   animate={{ opacity: 1, y: 0 }}
                   className="text-slate-400 text-sm space-y-2"
                 >
-                  <div> Hi! I'm Karan's portfolio assistant. How can I help you:</div>
-          
+                  <div>Hi! I'm Karan's portfolio assistant. How can I help you:</div>
                   <div className="mt-2">What would you like to know?</div>
                 </motion.div>
               ) : (
                 <>
-                  {messages.map((message, index) => (
+                  {messages.map((message) => (
                     <motion.div
-                      key={message.id || index}
+                      key={message.id}
                       initial={{ opacity: 0, y: 20, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       transition={{ duration: 0.3, ease: 'easeOut' }}
@@ -215,7 +203,6 @@ export default function Chatbot() {
                           ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg' 
                           : 'bg-slate-700/80 text-white backdrop-blur-sm border border-slate-600/50'
                       }`}>
-                        {/* Shimmer effect on hover */}
                         <div className="absolute inset-0 -left-full hover:left-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-all duration-700 pointer-events-none" />
                         
                         <div className="relative z-10">
@@ -229,12 +216,6 @@ export default function Chatbot() {
                                       target="_blank" 
                                       rel="noopener noreferrer"
                                       className="text-blue-300 hover:text-blue-200 underline transition-colors break-all"
-                                      onClick={(e) => {
-                                        if (href?.startsWith('/')) {
-                                          e.preventDefault();
-                                          window.location.href = href;
-                                        }
-                                      }}
                                     >
                                       {children}
                                     </a>
@@ -252,7 +233,6 @@ export default function Chatbot() {
                               >
                                 {message.content || ' '}
                               </ReactMarkdown>
-                              {/* Cursor removed - no blinking cursor */}
                             </div>
                           ) : (
                             <div className="break-words overflow-wrap-anywhere whitespace-pre-wrap">
@@ -267,8 +247,8 @@ export default function Chatbot() {
                 </>
               )}
               
-              {/* Typing Indicator - Only show when starting */}
-              {isLoading && messages.length > 0 && !messages[messages.length - 1].content && (
+              {/* Typing Indicator */}
+              {isLoading && messages.length > 0 && !messages[messages.length - 1]?.content && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -306,14 +286,14 @@ export default function Chatbot() {
               <div className="flex gap-2">
                 <input
                   className="flex-1 p-2 bg-slate-700/50 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm transition-all border border-slate-600/50"
-                  value={inputValue}
+                  value={input || ''}
                   placeholder="Type your message..."
-                  onChange={handleInputChange}
+                  onChange={(e) => setInput(e.target.value)}
                   disabled={isLoading}
                 />
                 <motion.button
                   type="submit"
-                  disabled={!inputValue.trim() || isLoading}
+                  disabled={!input?.trim() || isLoading}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:shadow-lg hover:shadow-blue-500/50 disabled:from-slate-600 disabled:to-slate-600 disabled:cursor-not-allowed text-white rounded-lg transition-all text-sm font-medium"
@@ -326,7 +306,7 @@ export default function Chatbot() {
         )}
       </AnimatePresence>
 
-      {/* Toggle Button with Animations */}
+      {/* Toggle Button */}
       <motion.button
         onClick={toggleChat}
         whileHover={{ scale: 1.1, rotate: 5 }}

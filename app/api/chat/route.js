@@ -1,12 +1,7 @@
-// In: app/api/chat/route.js
 export const maxDuration = 300;
-import { createClient } from '@supabase/supabase-js';
 export const runtime = 'edge';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+// Format current date and time
 const now = new Date();
 const currentDate = now.toLocaleDateString('en-US', {
   weekday: 'long',
@@ -15,27 +10,23 @@ const currentDate = now.toLocaleDateString('en-US', {
   day: 'numeric'
 });
 
-// Format it into a readable time string
 const currentTime = now.toLocaleTimeString('en-US', {
   hour: '2-digit',
   minute: '2-digit',
   timeZoneName: 'short'
 });
+
 // ============================================
 // API CONFIGURATION
 // ============================================
 
-// NVIDIA API (Primary) - Load from environment variables
 const NVIDIA_API_URL = 'https://integrate.api.nvidia.com/v1/chat/completions';
 const NVIDIA_API_KEY = process.env.NVIDIA_API_KEY;
-const NVIDIA_MODEL =  'nvidia/llama-3.3-nemotron-super-49b-v1.5';
+const NVIDIA_MODEL = 'nvidia/llama-3.3-nemotron-super-49b-v1.5';
 
-// OpenRouter API (Fallback)
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 const OPENROUTER_MODEL = 'meta-llama/llama-3.2-3b-instruct:free';
-
-// ============================================
 
 // System prompt with portfolio context
 const SYSTEM_PROMPT = `You are an AI assistant for Karan Singh Rathore's portfolio website. This website was designed and developed by Karan himself to showcase his skills, projects, and expertise as a Freelance IT Project Developer.
@@ -108,30 +99,20 @@ export async function POST(req) {
   try {
     const { messages } = await req.json();
 
-    // Create a readable stream for SSE
     const stream = new ReadableStream({
       async start(controller) {
         const encoder = new TextEncoder();
-        let apiUsed = 'none';
 
         try {
-          // Try NVIDIA API first (only if API key exists)
+          // Try NVIDIA API first
           if (NVIDIA_API_KEY && NVIDIA_API_URL) {
-            console.log(' Attempting NVIDIA API...');
-            console.log('URL:', NVIDIA_API_URL);
-            console.log('Model:', NVIDIA_MODEL);
+            console.log('🚀 Attempting NVIDIA API...');
             
-              const nvidiaResponse = await fetch(NVIDIA_API_URL, {
+            const nvidiaResponse = await fetch(NVIDIA_API_URL, {
               method: 'POST',
               headers: {
                 'Authorization': `Bearer ${NVIDIA_API_KEY}`,
                 'Content-Type': 'application/json',
-                'X-Request-Date': new Date().toLocaleDateString('en-US', { 
-                  weekday: 'long', 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })
               },
               body: JSON.stringify({
                 model: NVIDIA_MODEL,
@@ -148,31 +129,28 @@ export async function POST(req) {
 
             if (nvidiaResponse.ok) {
               console.log('✅ Using NVIDIA API');
-              apiUsed = 'nvidia';
               await processStream(nvidiaResponse, controller, encoder);
-              return; // Success, exit
+              return;
             } else {
               const errorText = await nvidiaResponse.text();
-              console.error('❌ NVIDIA API failed:', nvidiaResponse.status, errorText);
-              throw new Error(`NVIDIA API error: ${nvidiaResponse.status}`);
+              console.error('❌ NVIDIA failed:', nvidiaResponse.status, errorText);
+              throw new Error('NVIDIA API unavailable');
             }
           } else {
-            console.log('⚠️ NVIDIA API key not configured, skipping...');
             throw new Error('NVIDIA API key not configured');
           }
 
         } catch (nvidiaError) {
-          console.error('❌ NVIDIA API error:', nvidiaError.message);
+          console.error('❌ NVIDIA error:', nvidiaError.message);
           console.log('🔄 Falling back to OpenRouter...');
 
           try {
-            // Fallback to OpenRouter
             const openRouterResponse = await fetch(OPENROUTER_API_URL, {
               method: 'POST',
               headers: {
                 'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
                 'Content-Type': 'application/json',
-                'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+                'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'https://www.karansinghrathore.me',
                 'X-Title': 'Karan Portfolio Chatbot'
               },
               body: JSON.stringify({
@@ -190,18 +168,20 @@ export async function POST(req) {
             if (!openRouterResponse.ok) {
               const errorText = await openRouterResponse.text();
               console.error('❌ OpenRouter failed:', openRouterResponse.status, errorText);
-              throw new Error(`OpenRouter API error: ${openRouterResponse.status}`);
+              throw new Error('OpenRouter API unavailable');
             }
 
-            console.log('✅ Using OpenRouter (Fallback)');
-            apiUsed = 'openrouter';
+            console.log('✅ Using OpenRouter');
             await processStream(openRouterResponse, controller, encoder);
 
           } catch (fallbackError) {
-            console.error('❌ Both APIs failed:', fallbackError);
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ 
-              error: 'Both API services are unavailable. Please try again later.' 
-            })}\n\n`));
+            console.error('❌ All APIs failed:', fallbackError);
+            
+            const errorMsg = JSON.stringify({ 
+              content: 'Sorry, the AI service is temporarily unavailable. Please try again later.' 
+            });
+            controller.enqueue(encoder.encode(`data: ${errorMsg}\n\n`));
+            controller.enqueue(encoder.encode('data: [DONE]\n\n'));
             controller.close();
           }
         }
@@ -209,44 +189,60 @@ export async function POST(req) {
         async function processStream(response, controller, encoder) {
           const reader = response.body.getReader();
           const decoder = new TextDecoder();
+          let buffer = '';
 
           try {
             while (true) {
               const { done, value } = await reader.read();
               
               if (done) {
+                if (buffer.trim()) {
+                  processLine(buffer, controller, encoder);
+                }
+                controller.enqueue(encoder.encode('data: [DONE]\n\n'));
                 controller.close();
                 break;
               }
 
-              const chunk = decoder.decode(value, { stream: true });
-              const lines = chunk.split('\n').filter(line => line.trim() !== '');
-
+              buffer += decoder.decode(value, { stream: true });
+              const lines = buffer.split('\n');
+              buffer = lines.pop() || '';
+              
               for (const line of lines) {
-                if (line.startsWith('data: ')) {
-                  const data = line.slice(6).trim();
-                  
-                  if (data === '[DONE]') {
-                    controller.close();
-                    return;
-                  }
-
-                  try {
-                    const parsed = JSON.parse(data);
-                    const content = parsed.choices?.[0]?.delta?.content;
-
-                    if (content) {
-                      controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content })}\n\n`));
-                    }
-                  } catch (parseError) {
-                    console.error('Parse error:', parseError, 'Data:', data);
-                  }
+                if (line.trim()) {
+                  processLine(line, controller, encoder);
                 }
               }
             }
           } catch (streamError) {
-            console.error('Stream processing error:', streamError);
+            console.error('Stream error:', streamError);
+            controller.enqueue(encoder.encode('data: [DONE]\n\n'));
             controller.close();
+          }
+        }
+
+        function processLine(line, controller, encoder) {
+          if (!line.startsWith('data: ')) return;
+          
+          const data = line.slice(6).trim();
+          
+          if (data === '[DONE]') {
+            controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+            return;
+          }
+
+          if (!data) return;
+
+          try {
+            const parsed = JSON.parse(data);
+            const content = parsed.choices?.[0]?.delta?.content;
+
+            if (content) {
+              const payload = JSON.stringify({ content });
+              controller.enqueue(encoder.encode(`data: ${payload}\n\n`));
+            }
+          } catch (parseError) {
+            console.warn('Skipped malformed chunk:', data.substring(0, 50));
           }
         }
       }
@@ -257,11 +253,19 @@ export async function POST(req) {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
         'Connection': 'keep-alive',
+        'X-Accel-Buffering': 'no',
       },
     });
 
   } catch (error) {
-    console.error('API route error:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error('❌ API route error:', error);
+    
+    return new Response(
+      JSON.stringify({ error: 'Internal server error' }), 
+      { 
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
   }
 }
