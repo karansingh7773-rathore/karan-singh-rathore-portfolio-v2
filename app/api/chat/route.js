@@ -1,5 +1,5 @@
 // In: app/api/chat/route.js
-
+export const maxDuration = 300;
 import { createClient } from '@supabase/supabase-js';
 export const runtime = 'edge';
 
@@ -141,7 +141,7 @@ export async function POST(req) {
                 ],
                 stream: true,
                 temperature: 0.7,
-                max_tokens: 3000,
+                max_tokens: 1000,
                 top_p: 1,
               })
             });
