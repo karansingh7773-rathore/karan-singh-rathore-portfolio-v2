@@ -1,0 +1,10 @@
+import { Chatbot } from '@/components/chatbot/Chatbot';
+
+export default function Home() {
+  return (
+    <>
+      {/* Your existing content */}
+      <Chatbot />
+    </>
+  );
+}
